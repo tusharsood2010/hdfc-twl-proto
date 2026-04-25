@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>HDFC Bank – Two Wheeler Loan</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+:root{
+  --red:#E31837;--red-d:#B8102B;--navy:#003366;--navy-l:#004B9A;
+  --blue-soft:#EBF2FF;--gray:#F5F6FA;--gray-mid:#E0E4EE;--gray-t:#6B7280;
+  --text:#1A1D23;--text-l:#4B5563;--green:#00875A;--green-bg:#E6F7F1;
+  --amber:#F59E0B;--amber-bg:#FFFBEB;--error:#DC2626;--white:#FFFFFF;
+  --r:14px;--rs:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;-webkit-text-size-adjust:100%;}
+body{font-family:'DM Sans',sans-serif;background:#E8EBF3;color:var(--text);min-height:100vh;display:flex;justify-content:center;-webkit-tap-highlight-color:transparent;}
+.app{width:100%;max-width:480px;background:#fff;min-height:100vh;display:flex;flex-direction:column;}
+
+/* TOPBAR */
+.topbar{background:var(--navy);padding:14px 20px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo-box{background:var(--red);color:#fff;font-size:11px;font-weight:700;padding:4px 9px;border-radius:5px;}
+.logo-txt{color:#fff;font-size:13px;font-weight:600;margin-left:10px;}
+.sec-tag{color:rgba(255,255,255,.6);font-size:10px;}
+
+/* STEPPER — exactly 6 steps */
+.stepper{background:var(--navy);padding:0 16px 14px;}
+.st-track{display:flex;}
+.st-item{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;}
+.st-item:not(:last-child)::after{content:'';position:absolute;top:9px;left:50%;width:100%;height:2px;background:rgba(255,255,255,.2);z-index:0;}
+.st-item.done:not(:last-child)::after{background:var(--red);}
+.st-dot{width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;z-index:1;position:relative;font-size:9px;color:#fff;font-weight:700;}
+.st-item.done .st-dot{background:var(--red);border-color:var(--red);}
+.st-item.active .st-dot{background:#fff;border-color:#fff;color:var(--navy);}
+.st-lbl{font-size:8px;color:rgba(255,255,255,.5);margin-top:4px;text-align:center;white-space:nowrap;}
+.st-item.active .st-lbl{color:#fff;font-weight:600;}
+.st-item.done .st-lbl{color:rgba(255,255,255,.75);}
+
+/* PATH BADGE */
+.path-badge{display:none;background:var(--amber-bg);border-bottom:2px solid var(--amber);padding:8px 20px;font-size:11px;color:#92400E;font-weight:500;align-items:center;gap:6px;}
+.path-badge.show{display:flex;}
+
+/* MAIN */
+.main{flex:1;padding:16px 16px 40px;}
+
+/* BLOCK */
+.block{border:1.5px solid var(--gray-mid);border-radius:var(--r);margin-bottom:10px;overflow:hidden;background:#fff;}
+.block.active{border-color:var(--navy);box-shadow:0 4px 16px rgba(0,51,102,.1);}
+.block.done{border-color:var(--green);background:var(--green-bg);}
+.block.locked{opacity:.42;pointer-events:none;}
+.blk-hdr{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;min-height:54px;}
+.blk-l{display:flex;align-items:center;gap:11px;}
+.blk-num{width:28px;height:28px;border-radius:50%;background:var(--gray);color:var(--gray-t);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.block.active .blk-num{background:var(--navy);color:#fff;}
+.block.done .blk-num{background:var(--green);color:#fff;}
+.blk-title{font-size:14px;font-weight:600;}
+.block.done .blk-title{color:var(--green);}
+.blk-sum{font-size:11px;color:var(--gray-t);margin-top:2px;}
+.chev{width:18px;height:18px;color:var(--gray-t);transition:transform .25s;flex-shrink:0;}
+.block.active .chev{transform:rotate(180deg);}
+.block.done .chev{display:none;}
+.blk-body{display:none;padding:0 16px 20px;animation:sd .22s ease;}
+.block.active .blk-body{display:block;}
+@keyframes sd{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+
+/* SECTION DIVIDER */
+.sec-hdr{font-size:12px;font-weight:600;color:var(--navy);padding:10px 0 8px;border-bottom:1.5px solid var(--blue-soft);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.sec-hdr:not(:first-child){margin-top:16px;}
+
+/* FORMS */
+.fg{margin-bottom:14px;}
+label.lbl{display:block;font-size:12px;font-weight:500;color:var(--text-l);margin-bottom:6px;}
+.req{color:var(--red);}
+input[type=text],input[type=tel],input[type=email],input[type=date],select,textarea{
+  width:100%;padding:13px 14px;border:1.5px solid var(--gray-mid);border-radius:var(--rs);
+  font-family:'DM Sans',sans-serif;font-size:16px;color:var(--text);background:#fff;
+  outline:none;-webkit-appearance:none;appearance:none;transition:border-color .2s;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(0,51,102,.07);}
+input.err{border-color:var(--error);}
+input.ok{border-color:var(--green);}
+/* Locked / non-editable field */
+input.locked-field,select.locked-field{background:var(--gray);color:var(--gray-t);pointer-events:none;border-color:var(--gray-mid);}
+textarea{resize:none;height:72px;}
+.hint{font-size:11px;color:var(--gray-t);margin-top:4px;line-height:1.5;}
+.hint.warn{color:#92400E;}
+.emsg{font-size:11px;color:var(--error);margin-top:4px;}
+.omsg{font-size:11px;color:var(--green);margin-top:4px;}
+.iw{position:relative;}
+.iw input{padding-right:46px;}
+.iico{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+
+/* OTP */
+.otp-row{display:flex;gap:8px;justify-content:center;margin:10px 0;}
+.otp-box{width:46px;height:52px;text-align:center;font-size:20px;font-weight:700;border:1.5px solid var(--gray-mid);border-radius:var(--rs);padding:0;font-family:'DM Sans',sans-serif;-webkit-appearance:none;outline:none;}
+.otp-box:focus{border-color:var(--navy);}
+.otp-res{text-align:center;font-size:12px;color:var(--gray-t);margin-top:8px;}
+.otp-res span{color:var(--navy-l);font-weight:600;cursor:pointer;}
+
+/* CHIPS */
+.chips{display:flex;gap:8px;flex-wrap:wrap;}
+.chip{flex:1;min-width:70px;padding:11px 10px;border:1.5px solid var(--gray-mid);border-radius:var(--rs);text-align:center;font-size:13px;font-weight:500;color:var(--text-l);cursor:pointer;user-select:none;touch-action:manipulation;}
+.chip.sel{border-color:var(--navy);background:var(--blue-soft);color:var(--navy);font-weight:600;}
+.chip.dis{opacity:.4;pointer-events:none;}
+
+/* TOGGLE */
+.tog-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--gray);}
+.tog-row:last-child{border-bottom:none;}
+.tog-lbl{font-size:13px;color:var(--text);}
+.tog-sub{font-size:11px;color:var(--gray-t);margin-top:2px;}
+.tog{width:44px;height:26px;background:var(--gray-mid);border-radius:13px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;touch-action:manipulation;}
+.tog.on{background:var(--navy);}
+.tog::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.tog.on::after{left:21px;}
+
+/* CONSENT */
+.consent{background:var(--gray);border-radius:var(--rs);padding:12px 14px;margin-top:12px;}
+.ci{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;}
+.ci:last-child{margin-bottom:0;}
+.ci input[type=checkbox]{width:18px;height:18px;min-width:18px;border-radius:4px;padding:0;margin-top:1px;flex-shrink:0;accent-color:var(--navy);cursor:pointer;}
+.ctxt{font-size:11px;color:var(--gray-t);line-height:1.55;}
+.ctxt a{color:var(--navy-l);text-decoration:underline;font-weight:500;}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-ov.show{display:flex;}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:460px;max-height:88vh;overflow-y:auto;padding:20px;}
+.modal-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.modal-sub{font-size:11px;color:var(--gray-t);margin-bottom:14px;}
+.modal-tbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px;}
+.modal-tbl th{background:var(--navy);color:#fff;padding:7px 10px;text-align:left;font-size:11px;}
+.modal-tbl td{padding:7px 10px;border-bottom:1px solid var(--gray-mid);vertical-align:top;font-size:11px;}
+.modal-tbl tr:nth-child(even) td{background:var(--gray);}
+.modal-body{font-size:11px;color:var(--text-l);line-height:1.6;margin-bottom:12px;}
+.modal-body p{margin-bottom:8px;}
+
+/* BUTTONS */
+.btn{width:100%;padding:15px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:8px;touch-action:manipulation;position:relative;z-index:1;}
+.btn-p{background:var(--red);color:#fff;}
+.btn-p:active{background:var(--red-d);}
+.btn-s{background:transparent;color:var(--navy);border:1.5px solid var(--navy);}
+.btn-s:active{background:var(--blue-soft);}
+.btn-g{background:transparent;color:var(--red);font-size:13px;padding:10px;}
+.btn-sm{width:auto;padding:10px 16px;font-size:13px;}
+.btn:disabled{opacity:.4;pointer-events:none;}
+
+/* OFFER CARD */
+.offer-card{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-l) 100%);border-radius:var(--r);padding:22px 18px 18px;color:#fff;margin-bottom:14px;overflow:hidden;position:relative;}
+.offer-card::before{content:'';position:absolute;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.05);top:-40px;right:-30px;}
+.og{font-size:12px;opacity:.7;margin-bottom:3px;}
+.on_{font-size:17px;font-weight:700;margin-bottom:6px;}
+.off-valid{background:rgba(255,165,0,.25);border:1px solid rgba(255,165,0,.5);border-radius:20px;padding:3px 12px;font-size:10px;color:#FFD580;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px;}
+.ol{font-size:10px;opacity:.6;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;}
+.oa{font-size:32px;font-weight:700;letter-spacing:-.5px;margin-bottom:2px;}
+.oa span{font-size:18px;font-weight:500;}
+.oa-words{font-size:11px;opacity:.65;margin-bottom:14px;}
+.offer-2w{font-size:52px;text-align:center;margin:6px 0 14px;}
+.ometa{display:flex;gap:10px;background:rgba(255,255,255,.1);border-radius:10px;padding:10px 12px;}
+.om{flex:1;text-align:center;}
+.omv{font-size:13px;font-weight:600;}
+.omk{font-size:9px;opacity:.6;margin-top:2px;}
+
+/* FORM 97 */
+.form97{background:var(--amber-bg);border:1.5px solid var(--amber);border-radius:var(--rs);padding:14px;margin-bottom:14px;}
+.form97-title{font-size:13px;font-weight:700;color:#92400E;margin-bottom:4px;}
+.form97-sub{font-size:11px;color:#92400E;margin-bottom:12px;}
+.form97-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(245,158,11,.3);font-size:13px;}
+.form97-row:last-of-type{border-bottom:none;}
+.form97-k{color:var(--gray-t);font-size:12px;}
+.form97-v{font-weight:600;color:var(--text);text-align:right;}
+.form97-decl{font-size:11px;color:#92400E;line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid rgba(245,158,11,.3);}
+
+/* PAN UPGRADE */
+.pan-upgrade{display:none;background:var(--blue-soft);border:1.5px solid var(--navy);border-radius:var(--rs);padding:14px;margin-bottom:14px;}
+.pan-upgrade.show{display:block;animation:sd .22s ease;}
+
+/* INSURANCE */
+.ins-card{border:1.5px solid var(--gray-mid);border-radius:var(--rs);padding:13px;margin-top:8px;cursor:pointer;touch-action:manipulation;}
+.ins-card.sel{border-color:var(--green);background:var(--green-bg);}
+.ih{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.it{font-size:13px;font-weight:600;}
+.ib{background:var(--red);color:#fff;font-size:9px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.ibf{font-size:11px;color:var(--green);font-weight:500;margin-top:3px;}
+.ip_{font-size:11px;color:var(--gray-t);margin-top:2px;}
+
+/* KYC OPTIONS */
+.ko{border:1.5px solid var(--gray-mid);border-radius:var(--rs);padding:14px;margin-bottom:9px;cursor:pointer;display:flex;align-items:center;gap:13px;touch-action:manipulation;}
+.ko:active{background:var(--blue-soft);}
+.ko.rec{border-color:var(--navy);background:var(--blue-soft);}
+.ko.dis{opacity:.45;pointer-events:none;}
+.ki{width:42px;height:42px;border-radius:50%;background:var(--gray);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ko.rec .ki{background:var(--navy);}
+.kt{font-size:14px;font-weight:600;}
+.ks{font-size:11px;color:var(--gray-t);margin-top:2px;}
+.kb{margin-left:auto;background:var(--navy);color:#fff;font-size:9px;font-weight:600;padding:3px 8px;border-radius:20px;flex-shrink:0;}
+
+/* LOAN SLIDER */
+.slider{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:var(--gray-mid);outline:none;margin:14px 0 6px;}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--navy);cursor:pointer;box-shadow:0 2px 6px rgba(0,51,102,.3);}
+.slider-lbls{display:flex;justify-content:space-between;font-size:10px;color:var(--gray-t);}
+
+/* TENURE — single row */
+.tenrow{display:flex;gap:6px;margin-top:8px;flex-wrap:nowrap;}
+.tc_{flex:1;padding:9px 4px;border:1.5px solid var(--gray-mid);border-radius:20px;font-size:11px;font-weight:500;color:var(--text-l);cursor:pointer;touch-action:manipulation;text-align:center;white-space:nowrap;}
+.tc_.sel{border-color:var(--navy);background:var(--navy);color:#fff;}
+
+/* EMI CARD */
+.ec{background:var(--blue-soft);border-radius:var(--rs);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
+.el{font-size:11px;color:var(--gray-t);}
+.ea{font-size:22px;font-weight:700;color:var(--navy);}
+.esb{font-size:10px;color:var(--gray-t);}
+
+/* CONFIRM TABLE */
+.ct{border:1.5px solid var(--gray-mid);border-radius:var(--rs);overflow:hidden;}
+.cr{display:flex;justify-content:space-between;padding:10px 13px;font-size:13px;border-bottom:1px solid var(--gray);}
+.cr:last-child{border-bottom:none;}
+.cr:nth-child(even){background:var(--gray);}
+.ck{color:var(--gray-t);}
+.cv{font-weight:600;text-align:right;}
+
+/* PILL */
+.pill{background:var(--blue-soft);border-left:3px solid var(--navy);border-radius:0 6px 6px 0;padding:10px 12px;font-size:12px;color:var(--navy);margin:8px 0;line-height:1.5;}
+.pill-w{background:var(--amber-bg);border-left:3px solid var(--amber);border-radius:0 6px 6px 0;padding:10px 12px;font-size:12px;color:#92400E;margin:8px 0;line-height:1.5;}
+.pill-g{background:var(--green-bg);border-left:3px solid var(--green);border-radius:0 6px 6px 0;padding:10px 12px;font-size:12px;color:var(--green);margin:8px 0;line-height:1.5;}
+
+/* AMOUNT PREFIX */
+.aw{position:relative;}
+.ap{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:600;color:var(--text-l);}
+.aw input{padding-left:28px;}
+
+/* LOADER */
+.ldr{display:none;text-align:center;padding:24px 16px;}
+.ldr.show{display:block;}
+.spin{width:40px;height:40px;border:3px solid var(--gray-mid);border-top-color:var(--red);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 12px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.lt{font-size:13px;color:var(--gray-t);font-weight:500;}
+.ls{font-size:11px;color:var(--gray-t);margin-top:4px;}
+.loading-2w{font-size:52px;animation:bou .9s infinite alternate;}
+@keyframes bou{from{transform:translateY(0);}to{transform:translateY(-8px);}}
+
+/* SUCCESS */
+.sscr{text-align:center;padding:14px 6px;}
+.sic{width:68px;height:68px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;}
+.stit{font-size:19px;font-weight:700;margin-bottom:4px;}
+.samt{font-size:28px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.ssub{font-size:12px;color:var(--gray-t);margin-bottom:14px;}
+.dlinks{display:flex;flex-direction:column;gap:7px;margin:12px 0;}
+.dl{display:flex;align-items:center;gap:11px;padding:12px 13px;border:1.5px solid var(--gray-mid);border-radius:var(--rs);color:var(--navy);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;touch-action:manipulation;}
+.dl:active{background:var(--blue-soft);}
+
+/* PDD */
+.pdd-card{border:1.5px solid var(--gray-mid);border-radius:var(--rs);padding:13px;margin-bottom:8px;cursor:pointer;touch-action:manipulation;display:flex;justify-content:space-between;align-items:center;}
+.pdd-card.up{border-color:var(--green);background:var(--green-bg);}
+.pdd-t{font-size:13px;font-weight:600;}
+.pdd-s{font-size:11px;color:var(--gray-t);}
+.pdd-s.ok{color:var(--green);font-weight:600;}
+
+/* UTILS */
+.mt4{margin-top:4px;}.mt8{margin-top:8px;}.mt12{margin-top:12px;}.mt16{margin-top:16px;}
+.tc{text-align:center;}.ts{font-size:12px;}.txs{font-size:11px;}.tm{color:var(--gray-t);}
+.tn{color:var(--navy);}.fw6{font-weight:600;}.fw7{font-weight:700;}
+.hide{display:none!important;}
+.div{height:1px;background:var(--gray-mid);margin:14px 0;}
+.divt{text-align:center;font-size:11px;color:var(--gray-t);margin:8px 0;position:relative;}
+.divt::before,.divt::after{content:'';position:absolute;top:50%;width:38%;height:1px;background:var(--gray-mid);}
+.divt::before{left:0;}.divt::after{right:0;}
+.sec-lbl{font-size:10px;font-weight:600;color:var(--gray-t);text-transform:uppercase;letter-spacing:.8px;margin:10px 0 7px;}
+
+/* FOOTER */
+.ft{padding:14px 16px;text-align:center;font-size:10px;color:var(--gray-t);background:var(--gray);border-top:1px solid var(--gray-mid);line-height:1.7;}
+.ft a{color:var(--navy-l);text-decoration:none;}
+@media(min-width:481px){
+  body{padding:20px 0 60px;align-items:flex-start;}
+  .app{margin:0 auto;border-radius:20px;overflow:hidden;min-height:auto;box-shadow:0 8px 40px rgba(0,0,0,.15);}
+}
+</style>
+</head>
+<body>
+<div id="disc" style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#E65100;color:#fff;font-family:Arial,sans-serif;padding:10px 14px 10px 14px;box-shadow:0 2px 8px rgba(0,0,0,.3);">
+  <span onclick="document.getElementById('disc').style.display='none'" style="float:right;cursor:pointer;font-size:20px;line-height:1;margin-left:8px;">✕</span>
+  <div style="font-size:12px;font-weight:700;margin-bottom:3px;">⚠ INTERNAL PROTOTYPE ONLY</div>
+  <div style="font-size:11px;line-height:1.5;">Not a live banking website. For HDFC Bank internal review only. No real data is collected or processed.</div>
+</div>
+<div style="height:72px;"></div>
+<div class="app">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div style="display:flex;align-items:center;">
+    <div class="logo-box">HDFC</div>
+    <span class="logo-txt">Two Wheeler Loan</span>
+  </div>
+  <div class="sec-tag">🔒 256-bit Secure</div>
+</div>
+
+<!-- STEPPER — 6 steps = 6 blocks -->
+<div class="stepper">
+  <div class="st-track">
+    <div class="st-item active" id="s1"><div class="st-dot">1</div><div class="st-lbl">Verify</div></div>
+    <div class="st-item locked" id="s2"><div class="st-dot">2</div><div class="st-lbl">KYC</div></div>
+    <div class="st-item locked" id="s3"><div class="st-dot">3</div><div class="st-lbl">Profile</div></div>
+    <div class="st-item locked" id="s4"><div class="st-dot">4</div><div class="st-lbl">Loan</div></div>
+    <div class="st-item locked" id="s5"><div class="st-dot">5</div><div class="st-lbl">Offer</div></div>
+    <div class="st-item locked" id="s6"><div class="st-dot">6</div><div class="st-lbl">Disburse</div></div>
+  </div>
+</div>
+
+<!-- PATH BADGE -->
+<div class="path-badge" id="path-badge">⚡ Small Ticket journey active — No PAN required for loans below ₹1,00,000</div>
+
+<div class="main">
+
+<!-- ══ BLOCK 1: VERIFY — Mobile + OTP ══ -->
+<div class="block active" id="b1">
+  <div class="blk-hdr">
+    <div class="blk-l"><div class="blk-num">1</div><div><div class="blk-title">Mobile Verification</div><div class="blk-sum" id="b1s"></div></div></div>
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="blk-body">
+    <!-- Mobile entry -->
+    <div id="mob-sc">
+      <div class="fg">
+        <label class="lbl">Mobile Number <span class="req">*</span></label>
+        <div style="display:flex;gap:8px;">
+          <div style="padding:13px 10px;border:1.5px solid var(--gray-mid);border-radius:var(--rs);font-size:13px;color:var(--gray-t);white-space:nowrap;flex-shrink:0;">🇮🇳 +91</div>
+          <div class="iw" style="flex:1;">
+            <input type="tel" id="mob" inputmode="numeric" maxlength="10" placeholder="10-digit number" autocomplete="tel" oninput="numOnly(this);mobChk()"/>
+            <span class="iico" id="mob-ic"></span>
+          </div>
+        </div>
+        <div class="hint">We will send an OTP on this number</div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Identify Using <span class="req">*</span></label>
+        <div class="chips">
+          <div class="chip" id="id-pan" onclick="selId('pan',this)">PAN</div>
+          <div class="chip" id="id-dob" onclick="selId('dob',this)">Date of Birth</div>
+        </div>
+        <div class="hint mt4">Use Date of Birth for loans below ₹1,00,000 · PAN required for ₹1,00,000 and above</div>
+      </div>
+      <div class="fg hide" id="pan-grp">
+        <label class="lbl">PAN Number <span class="req">*</span></label>
+        <div class="iw"><input type="text" id="pan-in" inputmode="text" maxlength="10" placeholder="ABCDE1234F" oninput="panFmt(this,'pan-in-ic')"/><span class="iico" id="pan-in-ic"></span></div>
+      </div>
+      <div class="fg hide" id="dob-grp">
+        <label class="lbl">Date of Birth <span class="req">*</span></label>
+        <input type="date" id="dob-in" max="2006-01-01"/>
+        <div class="hint">As per Aadhaar / official records</div>
+      </div>
+      <div class="consent">
+        <div class="ci"><input type="checkbox" id="c1" checked/><label class="ctxt" for="c1">I hereby consent to collection and processing of my personal data for availing this loan and relevant services in the manner described in the <a href="#" onclick="showDPDP();return false;">notice</a>. <a href="#">T&amp;C</a> · <a href="#">Privacy Policy</a></label></div>
+        <div class="ci"><input type="checkbox" id="c2"/><label class="ctxt" for="c2">I consent to receiving personalised offers from HDFC Bank via Call, SMS, WhatsApp, Email or other channels. <a href="#" onclick="showDPDP();return false;">Read more</a></label></div>
+      </div>
+      <div class="mt16"><button class="btn btn-p" onclick="sendOTP()">Get OTP →</button></div>
+      <div class="tc mt8 txs tm">For full details read our <a href="#" style="color:var(--navy-l);">Terms &amp; Conditions</a> and <a href="#" style="color:var(--navy-l);">Privacy Policy</a> · <a href="#" style="color:var(--navy-l);">Digital Lending – Important Links</a></div>
+    </div>
+    <!-- OTP -->
+    <div id="otp-sc" class="hide">
+      <div class="pill">OTP sent to <strong id="otp-disp"></strong></div>
+      <div class="fg mt12">
+        <label class="lbl">Enter 6-digit OTP <span class="req">*</span></label>
+        <div class="otp-row">
+          <input class="otp-box" type="tel" inputmode="numeric" maxlength="1" id="o1" oninput="om(this,'o2')" onkeydown="ob(event,'')"/>
+          <input class="otp-box" type="tel" inputmode="numeric" maxlength="1" id="o2" oninput="om(this,'o3')" onkeydown="ob(event,'o1')"/>
+          <input class="otp-box" type="tel" inputmode="numeric" maxlength="1" id="o3" oninput="om(this,'o4')" onkeydown="ob(event,'o2')"/>
+          <input class="otp-box" type="tel" inputmode="numeric" maxlength="1" id="o4" oninput="om(this,'o5')" onkeydown="ob(event,'o3')"/>
+          <input class="otp-box" type="tel" inputmode="numeric" maxlength="1" id="o5" oninput="om(this,'o6')" onkeydown="ob(event,'o4')"/>
+          <input class="otp-box" type="tel" inputmode="numeric" maxlength="1" id="o6" oninput="od()" onkeydown="ob(event,'o5')"/>
+        </div>
+        <div class="otp-res">Resend in <span id="otmr">30s</span> · <span id="otp-att" style="color:var(--gray-t);"></span></div>
+      </div>
+      <div class="consent mt8"><div class="ci"><input type="checkbox" id="c-otp" checked/><label class="ctxt" for="c-otp">By verifying OTP, I accept HDFC Bank's <a href="#">Terms &amp; Conditions</a> and <a href="#">Privacy Policy</a>.</label></div></div>
+      <div class="ldr" id="otp-ldr"><div class="spin"></div><div class="lt">Verifying…</div></div>
+      <div class="mt16"><button class="btn btn-p" onclick="verOTP()">Verify &amp; Continue →</button></div>
+      <div class="tc mt8"><button class="btn btn-g" onclick="chgMob()">Change Number</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BLOCK 2: KYC — Aadhaar eKYC (merged with KYC selection) ══ -->
+<div class="block locked" id="b2">
+  <div class="blk-hdr">
+    <div class="blk-l"><div class="blk-num">2</div><div><div class="blk-title">Aadhaar eKYC</div><div class="blk-sum" id="b2s"></div></div></div>
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="blk-body">
+    <div class="pill-g" id="kyc-greeting">Identity verified via OTP. Complete Aadhaar eKYC to auto-fill your details.</div>
+    <!-- Aadhaar number entry -->
+    <div id="aa-entry">
+      <div class="fg">
+        <label class="lbl">Select Language</label>
+        <select id="aa-lang"><option>English</option><option>Hindi</option><option>Marathi</option><option>Tamil</option><option>Telugu</option><option>Kannada</option><option>Bengali</option><option>Gujarati</option></select>
+      </div>
+      <div class="fg">
+        <label class="lbl">Aadhaar Number <span class="req">*</span></label>
+        <div class="iw">
+          <input type="tel" id="aa-num" inputmode="numeric" maxlength="12" placeholder="12-digit Aadhaar number" oninput="numOnly(this)"/>
+          <span class="iico" style="color:var(--gray-t);font-size:13px;cursor:pointer;" onclick="togAA()">👁</span>
+        </div>
+        <div class="hint">Your Aadhaar number is masked for privacy</div>
+      </div>
+      <div class="consent">
+        <div class="ci"><input type="checkbox" id="c-aa" checked/><label class="ctxt" for="c-aa">I voluntarily opt for Aadhaar OVD KYC or e-KYC or offline verification. I authorise HDFC Bank to use my Aadhaar details for KYC as per PML Act 2002 and RBI guidelines. Biometrics will not be stored/shared except as per law. <a href="#">Read full consent</a></label></div>
+      </div>
+      <div class="mt8 tc txs"><span style="color:var(--gray-t);">Other valid documents require a branch visit. </span><a href="#" style="color:var(--gray-t);text-decoration:underline;">Learn more</a></div>
+      <div class="mt16"><button class="btn btn-p" onclick="getAAOTP()">Get Aadhaar OTP →</button></div>
+    </div>
+    <!-- Aadhaar OTP -->
+    <div id="aa-otp" class="hide">
+      <div class="pill">OTP sent to your Aadhaar-linked mobile number</div>
+      <div class="fg mt12">
+        <label class="lbl">Enter OTP for eKYC <span class="req">*</span></label>
+        <div class="otp-row">
+          <input class="otp-box" type="tel" inputmode="numeric" maxlength="1" id="ao1" oninput="om(this,'ao2')" onkeydown="ob(event,'')"/>
+          <input class="otp-box" type="tel" inputmode="numeric" maxlength="1" id="ao2" oninput="om(this,'ao3')" onkeydown="ob(event,'ao1')"/>
+          <input class="otp-box" type="tel" inputmode="numeric" maxlength="1" id="ao3" oninput="om(this,'ao4')" onkeydown="ob(event,'ao2')"/>
+          <input class="otp-box" type="tel" inputmode="numeric" maxlength="1" id="ao4" oninput="om(this,'ao5')" onkeydown="ob(event,'ao3')"/>
+          <input class="otp-box" type="tel" inputmode="numeric" maxlength="1" id="ao5" oninput="om(this,'ao6')" onkeydown="ob(event,'ao4')"/>
+          <input class="otp-box" type="tel" inputmode="numeric" maxlength="1" id="ao6" oninput="verAAOTP()" onkeydown="ob(event,'ao5')"/>
+        </div>
+        <div class="otp-res">Resend in <span id="aatmr">67s</span></div>
+      </div>
+      <div class="ldr" id="aa-ldr"><div class="spin"></div><div class="lt">Verifying Aadhaar eKYC…</div><div class="ls">Fetching your details securely</div></div>
+      <div class="mt16"><button class="btn btn-p" onclick="verAAOTP()">Verify eKYC →</button></div>
+      <div class="tc mt8"><button class="btn btn-g" onclick="backAA()">Back</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BLOCK 3: PROFILE — Personal + Address + Employment ══ -->
+<div class="block locked" id="b3">
+  <div class="blk-hdr">
+    <div class="blk-l"><div class="blk-num">3</div><div><div class="blk-title">Profile Details</div><div class="blk-sum" id="b3s"></div></div></div>
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="blk-body">
+    <div class="pill-g">Details pre-filled from Aadhaar eKYC. Fields marked with 🔒 cannot be edited after verification.</div>
+
+    <!-- PERSONAL -->
+    <div class="sec-hdr">👤 Personal Details</div>
+    <div class="g2 fg">
+      <div><label class="lbl">Title</label><select id="pd-title"><option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option></select></div>
+      <div><label class="lbl">First Name <span class="req">*</span></label><input type="text" id="pd-fn" inputmode="text" placeholder="First name" class="locked-field" readonly/></div>
+    </div>
+    <div class="g2 fg">
+      <div><label class="lbl">Middle Name</label><input type="text" id="pd-mn" inputmode="text" placeholder="Optional"/></div>
+      <div><label class="lbl">Last Name <span class="req">*</span></label><input type="text" id="pd-ln" inputmode="text" placeholder="Last name" class="locked-field" readonly/></div>
+    </div>
+    <div class="g2 fg">
+      <div><label class="lbl">Gender</label><select id="pd-gen"><option>Male</option><option>Female</option><option>Other</option></select></div>
+      <div><label class="lbl">Date of Birth 🔒</label><input type="date" id="pd-dob" class="locked-field" readonly/></div>
+    </div>
+    <div class="fg"><label class="lbl">Marital Status <span class="req">*</span></label><select id="pd-ms"><option value="">Select</option><option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option></select></div>
+    <div class="fg"><label class="lbl">Email <span class="req">*</span></label><input type="email" id="pd-email" inputmode="email" placeholder="yourname@email.com"/></div>
+
+    <!-- PAN (Path A only) -->
+    <div class="hide" id="pan-profile-grp">
+      <div class="fg">
+        <label class="lbl">PAN Number 🔒</label>
+        <div class="iw"><input type="text" id="pd-pan" class="locked-field" readonly/><span class="iico" id="pd-pan-ic" style="color:var(--green);">✓</span></div>
+        <div class="omsg">Verified via NSDL</div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Is applicant name same as name on PAN? <span class="req">*</span></label>
+        <div class="chips"><div class="chip sel" onclick="chpSel(this,'pnm')">Yes</div><div class="chip" onclick="chpSel(this,'pnm');togPanName(this)">No</div></div>
+      </div>
+      <div class="fg hide" id="pan-altname"><label class="lbl">Name as per PAN</label><input type="text" id="pan-altname-val" inputmode="text" placeholder="Enter name as on PAN"/></div>
+      <div class="fg">
+        <label class="lbl">Is date of birth same as on PAN? <span class="req">*</span></label>
+        <div class="chips"><div class="chip sel" onclick="chpSel(this,'pdob')">Yes</div><div class="chip" onclick="chpSel(this,'pdob')">No</div></div>
+      </div>
+    </div>
+
+    <!-- ADDRESS -->
+    <div class="sec-hdr">🏠 Address Details</div>
+    <div class="fg">
+      <label class="lbl">Permanent Address 🔒 (from Aadhaar)</label>
+      <textarea id="pd-perm" class="locked-field" readonly>Auto-filled from Aadhaar eKYC</textarea>
+    </div>
+    <div class="g2 fg">
+      <div><label class="lbl">Ownership Type <span class="req">*</span></label><select id="pd-own"><option value="">Select</option><option>Owned</option><option>Rented</option><option>Parental</option><option>Company Provided</option></select></div>
+      <div><label class="lbl">Duration (years)</label><input type="tel" id="pd-adur" inputmode="numeric" placeholder="e.g. 3" oninput="numOnly(this)"/></div>
+    </div>
+    <div class="fg">
+      <label class="lbl">Communication Address <span class="req">*</span></label>
+      <div class="pill mt4" style="margin-bottom:10px;font-size:11px;">Must be the city where you wish to purchase the two-wheeler.</div>
+      <div class="chips" style="margin-bottom:10px;">
+        <div class="chip sel" id="comm-same" onclick="selComm('same',this)">Same as permanent</div>
+        <div class="chip" id="comm-manual" onclick="selComm('manual',this)">Enter manually</div>
+      </div>
+      <div class="hide" id="comm-fields">
+        <div class="fg"><label class="lbl">Address Line 1 <span class="req">*</span></label><input type="text" id="ca1" inputmode="text" placeholder="House/Flat, Street"/></div>
+        <div class="fg"><label class="lbl">Address Line 2</label><input type="text" id="ca2" inputmode="text" placeholder="Area, Colony"/></div>
+        <div class="g2 fg">
+          <div><label class="lbl">PIN Code <span class="req">*</span></label><input type="tel" id="ca-pin" inputmode="numeric" maxlength="6" placeholder="6-digit PIN" oninput="numOnly(this);fetchPin()"/></div>
+          <div><label class="lbl">City <span class="req">*</span></label><input type="text" id="ca-city" inputmode="text" placeholder="City"/></div>
+        </div>
+        <div class="fg"><label class="lbl">State</label><input type="text" id="ca-state" inputmode="text" placeholder="Auto-filled from PIN"/></div>
+      </div>
+    </div>
+
+    <!-- EMPLOYMENT -->
+    <div class="sec-hdr">💼 Employment Details</div>
+
+    <!-- Path B simplified -->
+    <div id="emp-b" class="hide">
+      <div class="pill-w">Small ticket journey — simplified income declaration as per RBI guidelines.</div>
+      <div class="fg mt8">
+        <label class="lbl">Employment Type <span class="req">*</span></label>
+        <div class="chips">
+          <div class="chip" onclick="chpSel(this,'etype')">Salaried</div>
+          <div class="chip" onclick="chpSel(this,'etype')">Self Employed</div>
+          <div class="chip" onclick="chpSel(this,'etype')">Daily Wage</div>
+          <div class="chip" onclick="chpSel(this,'etype')">Other</div>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Annual Income (₹) <span class="req">*</span></label>
+        <div class="aw"><span class="ap">₹</span><input type="tel" id="b-inc" inputmode="numeric" placeholder="Self-declared annual income" oninput="numOnly(this)"/></div>
+        <div class="hint">Self-declaration · Supported by Form 97 (RBI Guideline)</div>
+      </div>
+    </div>
+
+    <!-- Path A full -->
+    <div id="emp-a">
+      <div class="fg">
+        <label class="lbl">Employment Type <span class="req">*</span></label>
+        <select id="emp-type"><option value="">Select</option><option>Salaried</option><option>Self Employed</option><option>Self Employed Professional</option><option>Retired</option></select>
+      </div>
+      <div class="g2 fg">
+        <div><label class="lbl">Company Name</label><input type="text" id="emp-co" inputmode="text" placeholder="Employer / Company"/></div>
+        <div><label class="lbl">Designation</label><input type="text" id="emp-desig" inputmode="text" placeholder="e.g. Manager"/></div>
+      </div>
+      <div class="g2 fg">
+        <div><label class="lbl">Experience (yrs) <span class="req">*</span></label><input type="tel" id="emp-exp" inputmode="numeric" placeholder="Years" oninput="numOnly(this)"/></div>
+        <div><label class="lbl">Net Monthly Income (₹) <span class="req">*</span></label><div class="aw" style="margin-top:6px;"><span class="ap">₹</span><input type="tel" id="emp-inc" inputmode="numeric" placeholder="Take-home" oninput="numOnly(this)"/></div></div>
+      </div>
+      <div class="fg"><label class="lbl">Office PIN Code</label><input type="tel" id="oa-pin" inputmode="numeric" maxlength="6" placeholder="Office PIN" oninput="numOnly(this)"/></div>
+    </div>
+
+    <div class="consent mt12">
+      <div class="ci"><input type="checkbox" id="c-prof" checked/><label class="ctxt" for="c-prof">I confirm all profile details are accurate and will be used for KYC and loan processing. <a href="#">T&amp;C</a> · <a href="#">Privacy Policy</a></label></div>
+    </div>
+    <div class="mt16"><button class="btn btn-p" onclick="confProfile()">Confirm Profile →</button></div>
+  </div>
+</div>
+
+<!-- ══ BLOCK 4: LOAN — Two-Wheeler + Loan Details ══ -->
+<div class="block locked" id="b4">
+  <div class="blk-hdr">
+    <div class="blk-l"><div class="blk-num">4</div><div><div class="blk-title">Two-Wheeler &amp; Loan Details</div><div class="blk-sum" id="b4s"></div></div></div>
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    <span style="font-size:12px;color:var(--navy-l);font-weight:500;cursor:pointer;display:none;padding:4px 0 4px 8px;" id="b4-edit" onclick="editB4()">Edit</span>
+  </div>
+  <div class="blk-body">
+    <!-- Two-Wheeler Details -->
+    <div class="sec-hdr">🛵 Two-Wheeler Details</div>
+    <div class="g2 fg">
+      <div><label class="lbl">Manufacturer <span class="req">*</span></label>
+        <select id="tw-mfr">
+          <option value="">Select</option>
+          <option>Honda</option><option>Hero MotoCorp</option><option>Bajaj</option>
+          <option>TVS</option><option>Suzuki</option><option>Yamaha</option>
+          <option>Royal Enfield</option><option>KTM</option><option>Kawasaki</option>
+          <option>Ather</option><option>Ola Electric</option><option>Other</option>
+        </select>
+      </div>
+      <div><label class="lbl">Type <span class="req">*</span></label>
+        <select id="tw-type">
+          <option value="">Select</option><option>Scooter</option><option>Motorcycle</option>
+          <option>Moped</option><option>Electric Scooter</option><option>Electric Motorcycle</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label class="lbl">Model <span class="req">*</span></label><input type="text" id="tw-model" inputmode="text" placeholder="e.g. Activa 6G, Splendor Plus…"/></div>
+    <div class="fg">
+      <label class="lbl">On-Road Price (₹) <span class="req">*</span></label>
+      <div class="aw"><span class="ap">₹</span><input type="tel" id="tw-price" inputmode="numeric" placeholder="0" oninput="numOnly(this);onPriceChange()"/></div>
+      <div class="hint warn" id="price-note">Enter amount between ₹50,000 and ₹5,00,000 · Amount as quoted by dealer including RTO, insurance</div>
+      <div class="emsg hide" id="price-err"></div>
+    </div>
+    <div class="fg">
+      <div class="tog-row" style="border:none;padding:6px 0;">
+        <span class="ts" style="color:var(--text-l);">I have a dealer discount</span>
+        <div class="tog" id="disc-tog" onclick="this.classList.toggle('on');toggleDisc()"></div>
+      </div>
+      <div class="hide mt8" id="disc-grp">
+        <div class="aw"><span class="ap">₹</span><input type="tel" id="tw-disc" inputmode="numeric" placeholder="Discount amount" oninput="numOnly(this);onDiscChange()"/></div>
+        <div class="emsg hide" id="disc-err"></div>
+      </div>
+    </div>
+
+    <!-- Loan Details -->
+    <div class="sec-hdr">💰 Loan Details</div>
+
+    <!-- Path B: PAN upgrade if ≥1L -->
+    <div class="pan-upgrade" id="pan-upgrade">
+      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px;">PAN Required for Loans ≥ ₹1,00,000</div>
+      <div style="font-size:11px;color:var(--text-l);margin-bottom:10px;">Your loan amount requires PAN verification via NSDL.</div>
+      <div class="fg"><div class="iw"><input type="text" id="upg-pan" inputmode="text" maxlength="10" placeholder="ABCDE1234F" oninput="panFmt(this,'upg-pan-ic')"/><span class="iico" id="upg-pan-ic"></span></div></div>
+      <div class="ldr" id="upg-ldr"><div class="spin"></div><div class="lt">Verifying PAN via NSDL…</div></div>
+      <button class="btn btn-s btn-sm mt8" onclick="verUpgPAN()">Verify PAN &amp; Upgrade →</button>
+    </div>
+
+    <div class="fg">
+      <label class="lbl">Loan Amount Required (₹) <span class="req">*</span></label>
+      <div class="aw"><span class="ap">₹</span><input type="tel" id="loan-amt" inputmode="numeric" placeholder="0" oninput="numOnly(this);onLoanAmtChange()"/></div>
+      <input type="range" class="slider" id="loan-slider" min="10000" max="500000" step="1000" value="50000" oninput="onSliderChange(this.value)"/>
+      <div class="slider-lbls"><span id="sl-min">₹10,000</span><span id="sl-max">₹5,00,000</span></div>
+      <div class="hint" id="loan-hint">Actual loan subject to credit assessment and LTV of vehicle</div>
+      <div class="emsg hide" id="loan-err"></div>
+    </div>
+    <div class="fg">
+      <label class="lbl">Loan Tenure <span class="req">*</span></label>
+      <div class="tenrow">
+        <div class="tc_" onclick="selTen(12,this)">12 mo</div>
+        <div class="tc_" onclick="selTen(18,this)">18 mo</div>
+        <div class="tc_" onclick="selTen(24,this)">24 mo</div>
+        <div class="tc_ sel" onclick="selTen(36,this)">36 mo</div>
+        <div class="tc_" onclick="selTen(48,this)">48 mo</div>
+        <div class="tc_" onclick="selTen(60,this)">60 mo</div>
+      </div>
+    </div>
+    <div class="ec">
+      <div><div class="el">Indicative Monthly EMI</div><div class="esb" id="emi-sub">36 months · ~10.5% p.a.</div></div>
+      <div class="ea" id="emi-disp">₹—</div>
+    </div>
+    <div class="consent mt12">
+      <div class="ci"><input type="checkbox" id="c-tw" checked/><label class="ctxt" for="c-tw">EMI is indicative. Actual as per Sanction Letter. Loan subject to credit assessment and LTV. <a href="#">T&amp;C</a> · <a href="#">MITC</a></label></div>
+    </div>
+
+    <!-- Form 97 — Path B only, inline -->
+    <div class="hide" id="form97-wrap">
+      <div class="div"></div>
+      <div class="pill-w" style="margin-bottom:10px;">RBI Declaration (Form 97) — required for loans below ₹1,00,000 without PAN</div>
+      <div class="form97">
+        <div class="form97-title">Form 97 — Self-Declaration of Income &amp; Identity</div>
+        <div class="form97-sub">Auto-generated · Please review and confirm</div>
+        <div class="form97-row"><span class="form97-k">Full Name</span><span class="form97-v" id="f97-name">—</span></div>
+        <div class="form97-row"><span class="form97-k">Date of Birth</span><span class="form97-v" id="f97-dob">—</span></div>
+        <div class="form97-row"><span class="form97-k">Mobile</span><span class="form97-v" id="f97-mob">—</span></div>
+        <div class="form97-row"><span class="form97-k">Loan Amount</span><span class="form97-v" id="f97-loan">—</span></div>
+        <div class="form97-row"><span class="form97-k">Annual Income (Self-declared)</span><span class="form97-v" id="f97-inc">—</span></div>
+        <div class="form97-row"><span class="form97-k">Purpose</span><span class="form97-v">Purchase of Two-Wheeler</span></div>
+        <div class="form97-row"><span class="form97-k">Lender</span><span class="form97-v">HDFC Bank Limited</span></div>
+        <div class="form97-decl">I, the undersigned, hereby declare that the above information is true and correct to the best of my knowledge. I understand that this declaration is as per Reserve Bank of India guidelines for small value loans and that HDFC Bank may take appropriate action in case of any misrepresentation.</div>
+      </div>
+      <div class="consent mt8"><div class="ci"><input type="checkbox" id="c-f97"/><label class="ctxt" for="c-f97">I confirm the above RBI Form 97 declaration is accurate. <a href="#">RBI Guidelines</a> · <a href="#">T&amp;C</a></label></div></div>
+    </div>
+
+    <div class="ldr" id="offer-ldr">
+      <div class="loading-2w">🛵</div>
+      <div class="lt" id="offer-fact">Generating your exclusive offer…</div>
+      <div class="ls">HDFC Bank has provided two-wheeler loans to over 42 lakh customers</div>
+    </div>
+    <div class="mt16"><button class="btn btn-p" onclick="genOffer()">Generate Offer →</button></div>
+  </div>
+</div>
+
+<!-- ══ BLOCK 5: OFFER — Loan Offer + Insurance + Full KYC ══ -->
+<div class="block locked" id="b5">
+  <div class="blk-hdr">
+    <div class="blk-l"><div class="blk-num">5</div><div><div class="blk-title">Loan Offer &amp; Insurance</div><div class="blk-sum" id="b5s"></div></div></div>
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="blk-body">
+    <!-- Offer Card -->
+    <div class="sec-hdr">🎊 Your Pre-Approved Offer</div>
+    <div class="offer-card">
+      <div class="og">Great news,</div>
+      <div class="on_" id="off-nm">Customer!</div>
+      <div class="off-valid">🕐 <span id="off-val">Valid till —</span></div>
+      <div class="ol">Pre-Approved Loan Amount</div>
+      <div class="oa"><span>₹</span><span id="off-amt">—</span></div>
+      <div class="oa-words" id="off-words">—</div>
+      <div class="offer-2w">🛵</div>
+      <div class="ometa">
+        <div class="om"><div class="omv">9–12%</div><div class="omk">Rate p.a.</div></div>
+        <div class="om"><div class="omv" id="off-emi">₹—</div><div class="omk">Monthly EMI</div></div>
+        <div class="om"><div class="omv" id="off-ten">— mo</div><div class="omk">Tenure</div></div>
+      </div>
+    </div>
+    <div class="ct">
+      <div class="cr"><span class="ck">Reference Number</span><span class="cv" id="off-ref">—</span></div>
+      <div class="cr"><span class="ck">Two-Wheeler</span><span class="cv" id="off-tw">—</span></div>
+      <div class="cr"><span class="ck">On-Road Price</span><span class="cv" id="off-price">—</span></div>
+      <div class="cr"><span class="ck">Processing Fee</span><span class="cv">₹1,500 + applicable GST</span></div>
+    </div>
+    <div class="pill mt8">For detailed interest rate information, please visit the nearest HDFC Bank branch or dealership and speak with our representative.</div>
+
+    <!-- Full KYC -->
+    <div class="sec-hdr mt16">🔐 Full KYC Completion</div>
+    <div class="pill-w">Aadhaar eKYC is a partial KYC. Face Authentication or Video KYC is required to complete full KYC before disbursement.</div>
+    <div class="ko rec mt8" onclick="doFaceAuth()">
+      <div class="ki">😊</div>
+      <div><div class="kt">Face Authentication</div><div class="ks">Selfie-based · Under 60 seconds</div></div>
+      <div class="kb">FASTEST</div>
+    </div>
+    <div class="ko" onclick="doVKYC()">
+      <div class="ki">📹</div>
+      <div><div class="kt">Video KYC</div><div class="ks">Live call with HDFC officer · 10–15 mins</div></div>
+    </div>
+    <div class="ldr" id="fkyc-ldr"><div class="spin"></div><div class="lt" id="fkyc-lt">Initiating Face Authentication…</div></div>
+
+    <!-- Insurance -->
+    <div class="sec-hdr mt16">🛡 Insurance</div>
+    <div class="pill-w">Vehicle insurance is mandatory for disbursement. You may choose any insurer.</div>
+    <div class="ins-card mt8" id="vi-hdfc" onclick="selVI('hdfc',this)">
+      <div class="ih"><div class="it">HDFC ERGO Two-Wheeler Insurance</div><div class="ib">Save on PF</div></div>
+      <div class="ibf">✓ Processing fee waiver if you select HDFC ERGO</div>
+      <div class="ip_">Comprehensive cover · Cashless claims · 10,000+ garages</div>
+    </div>
+    <div class="ins-card mt8" id="vi-own" onclick="selVI('own',this)">
+      <div class="it">Insurance from another provider</div>
+      <div class="ip_">I have arranged / will arrange insurance from another insurer</div>
+      <div class="hide mt8" id="vi-up">
+        <div style="border:1.5px dashed var(--gray-mid);border-radius:var(--rs);padding:14px;text-align:center;cursor:pointer;" onclick="uploadVI()">
+          <div style="font-size:22px;margin-bottom:4px;">📎</div>
+          <div style="font-size:12px;color:var(--gray-t);">Upload insurance policy · PDF / JPG / PNG · Max 5 MB</div>
+        </div>
+        <div class="omsg hide" id="vi-up-ok">✓ Policy uploaded</div>
+      </div>
+    </div>
+    <div class="ins-card mt8" id="li-card" onclick="togLI(this)">
+      <div class="ih"><div class="it">Loan Protection Cover (Optional)</div><div class="ib" style="background:var(--navy);">Rate Benefit</div></div>
+      <div class="ibf">✓ Reduced interest rate if selected</div>
+      <div class="ip_">Covers repayment in case of inability to pay</div>
+    </div>
+
+    <div class="consent mt12">
+      <div class="ci"><input type="checkbox" id="c-off" checked/><label class="ctxt" for="c-off">I accept this pre-approved offer. Final terms as per Sanction Letter. Vehicle insurance is mandatory. Insurance is optional to avail from HDFC Bank. <a href="#">T&amp;C</a> · <a href="#">MITC</a> · <a href="#">IRDAI guidelines</a></label></div>
+    </div>
+    <div class="mt16"><button class="btn btn-p" id="apply-btn" onclick="applyNow()" disabled>Complete KYC to Proceed</button></div>
+    <div class="tc mt8 txs tm">Subject to credit assessment and policy conditions · <a href="#" style="color:var(--navy-l);">T&amp;C apply</a></div>
+  </div>
+</div>
+
+<!-- ══ BLOCK 6: DISBURSE — Sanction + PDD ══ -->
+<div class="block locked" id="b6">
+  <div class="blk-hdr">
+    <div class="blk-l"><div class="blk-num">6</div><div><div class="blk-title">Disbursement</div><div class="blk-sum" id="b6s"></div></div></div>
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="blk-body">
+    <div class="sscr">
+      <div class="sic">🎉</div>
+      <div class="stit" id="dis-title">Congratulations!</div>
+      <div class="samt" id="dis-amt">₹—</div>
+      <div class="ssub">Loan sanctioned · Dealer confirmation email sent automatically</div>
+      <div class="ct mt8">
+        <div class="cr"><span class="ck">Reference Number</span><span class="cv" id="dis-ref">—</span></div>
+        <div class="cr"><span class="ck">Two-Wheeler</span><span class="cv" id="dis-tw">—</span></div>
+        <div class="cr"><span class="ck">Monthly EMI</span><span class="cv tn fw7" id="dis-emi">—</span></div>
+        <div class="cr"><span class="ck">First EMI Date</span><span class="cv">1st of next month</span></div>
+        <div class="cr"><span class="ck">Tenure</span><span class="cv" id="dis-ten">—</span></div>
+        <div class="cr"><span class="ck">Interest Rate</span><span class="cv">9–12% p.a.</span></div>
+      </div>
+      <div class="dlinks">
+        <a class="dl" href="#"><span style="font-size:17px;">📄</span>Sanction Letter <span style="margin-left:auto;font-size:11px;color:var(--gray-t);">Download</span></a>
+        <a class="dl" href="#"><span style="font-size:17px;">📋</span>Loan Agreement <span style="margin-left:auto;font-size:11px;color:var(--gray-t);">Download</span></a>
+      </div>
+    </div>
+
+    <div class="pill-w">Our representative will contact you to collect post-disbursement documents. You may also upload them here at your convenience.</div>
+
+    <!-- PDD Upload (optional) -->
+    <div style="background:var(--gray);border-radius:var(--rs);padding:14px;margin-top:10px;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Post-Disbursement Documents (Optional)</div>
+      <div class="pdd-card" id="pdd1" onclick="uploadPDD('pdd1')"><div><div class="pdd-t">Aadhaar Copy</div></div><div class="pdd-s" id="pdd1-s">Tap to upload</div></div>
+      <div class="pdd-card" id="pdd2" onclick="uploadPDD('pdd2')"><div><div class="pdd-t">PAN Card</div></div><div class="pdd-s" id="pdd2-s">Tap to upload</div></div>
+      <div class="pdd-card" id="pdd3" onclick="uploadPDD('pdd3')"><div><div class="pdd-t">Signed Consent Form</div></div><div class="pdd-s" id="pdd3-s">Tap to upload</div></div>
+      <div class="pdd-card" id="pdd4" onclick="uploadPDD('pdd4')"><div><div class="pdd-t">Income Proof</div></div><div class="pdd-s" id="pdd4-s">Tap to upload</div></div>
+    </div>
+
+    <!-- NPS -->
+    <div style="background:var(--gray);border-radius:var(--rs);padding:14px;margin-top:10px;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px;">How was your experience? (1–10)</div>
+      <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin:8px 0;" id="nps-r">
+        <button style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gray-mid);background:#fff;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;" onclick="sNPS(this)">1</button>
+        <button style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gray-mid);background:#fff;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;" onclick="sNPS(this)">2</button>
+        <button style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gray-mid);background:#fff;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;" onclick="sNPS(this)">3</button>
+        <button style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gray-mid);background:#fff;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;" onclick="sNPS(this)">4</button>
+        <button style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gray-mid);background:#fff;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;" onclick="sNPS(this)">5</button>
+        <button style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gray-mid);background:#fff;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;" onclick="sNPS(this)">6</button>
+        <button style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gray-mid);background:#fff;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;" onclick="sNPS(this)">7</button>
+        <button style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gray-mid);background:#fff;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;" onclick="sNPS(this)">8</button>
+        <button style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gray-mid);background:#fff;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;" onclick="sNPS(this)">9</button>
+        <button style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--gray-mid);background:#fff;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation;" onclick="sNPS(this)">10</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--gray-t);">
+        <span>Not likely</span><span>Very likely</span>
+      </div>
+      <div class="mt12"><button class="btn btn-p" onclick="alert('Thank you for your feedback! Redirecting to HDFC Bank Home.')">Submit Feedback &amp; Go Home</button></div>
+    </div>
+
+    <div class="consent mt12">
+      <div class="ci"><input type="checkbox" id="c-dis" checked/><label class="ctxt" for="c-dis">Sanction letter and loan agreement have been sent to your registered email and mobile. <a href="#">Loan T&amp;C</a> · <a href="#">Grievance Redressal</a> · <a href="#">Sachet Portal</a> · <a href="#">CMS Portal – RBI IOS</a></label></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div class="ft">
+  HDFC Bank Ltd. · IRDAI Reg. No. CA0010 · <a href="#">Terms &amp; Conditions</a> · <a href="#">Privacy Policy</a> · <a href="#">Grievance Redressal</a> · <a href="#">Sachet</a> · <a href="#">Two Wheeler Loan</a> · <a href="#">Digital Lending – Important Links</a> · <a href="#">Complaint Management System (CMS) portal under RBI-IOS</a> · <a href="#">Grievance Redressal Officer Contact Details</a><br/>
+  Credit at sole discretion of HDFC Bank. Interest rates subject to change without prior notice. Keep your PAN handy for loan amount ₹1,00,000 or higher. Carry Identity Proof (PAN / Aadhaar Card) &amp; Residence Proof while visiting HDFC Bank branch or dealership. *T&amp;C apply. Min tenure 12 months.
+</div>
+</div><!-- /app -->
+
+<!-- DPDP MODAL -->
+<div class="modal-ov" id="dpdp-modal">
+  <div class="modal">
+    <div class="modal-title">NOTICE AND REQUEST FOR CONSENT</div>
+    <div class="modal-sub">HDFC Bank Limited ("Bank") is committed to protecting your personal data. This notice informs you about how we collect, handle, store, use, disclose and transfer your personal data.</div>
+    <table class="modal-tbl">
+      <tr><th>Category</th><th>Data Elements</th></tr>
+      <tr><td>Personal Identification</td><td>Name, address, mobile, email, date of birth, Aadhaar, PAN, marital status, citizenship, biometric information</td></tr>
+      <tr><td>Contact Details</td><td>Phone number, email address, address</td></tr>
+      <tr><td>Financial Information</td><td>Income details, employment information, bank account details, investment and transaction history, risk profile</td></tr>
+      <tr><td>Online Activity</td><td>Location, IP address, device identifiers, IMEI number, technical usage data</td></tr>
+      <tr><td>Communication Data</td><td>Records of correspondence, chats, emails, telephone conversations, grievances</td></tr>
+      <tr><td>Derivative Data</td><td>Credit scores, credit information, behavioural projections, analytical results</td></tr>
+    </table>
+    <div class="modal-body">
+      <p><strong>Purposes of Processing:</strong> KYC as per PML Act 2002 and RBI guidelines; credit assessment; fraud prevention; providing loan and related services; regulatory compliance.</p>
+      <p><strong>Your Rights:</strong> Access, correction, erasure of personal data; grievance redressal; nomination; consent withdrawal via <a href="#">Consent Connect</a>.</p>
+      <p><strong>Consent Withdrawal:</strong> Withdrawal of consent may result in discontinuation of the loan product and applicable charges.</p>
+      <p><strong>Contact:</strong> <a href="#">Privacy@hdfc.bank.in</a> · Data Protection Board of India for unresolved grievances.</p>
+    </div>
+    <div class="ci mt8"><input type="checkbox" id="dpdp-chk" checked/><label class="ctxt" for="dpdp-chk">I have read and understood this Notice and consent to the processing of my personal data as described. I give this consent voluntarily without any coercion.</label></div>
+    <div class="mt12"><button class="btn btn-p" onclick="closeDPDP()">I Agree and Continue →</button></div>
+  </div>
+</div>
+
+<script>
+// ── STATE ───────────────────────────────────────────
+var S={
+  mob:'',idType:'',pan:'',dob:'',
+  path:'A', // 'A' or 'B'
+  custFN:'',custLN:'',
+  twMfr:'',twModel:'',twType:'',twPrice:0,twDisc:0,
+  loanAmt:50000,tenure:36,rate:10.5,
+  income:0,
+  offerAmt:0,offerRef:'',
+  kycDone:false,vIns:'',lIns:false
+};
+var ten=36,tmr=null,aaTmr=null;
+var FACTS=['HDFC Bank has provided two-wheeler loans to over 42 lakh customers','Get your two-wheeler loan offer in minutes','Quick approval · Minimal documentation · Doorstep service','Preferred by over 42 lakh two-wheeler customers across India'];
+var fIdx=0;
+
+// ── UTILS ────────────────────────────────────────────
+function numOnly(el){el.value=el.value.replace(/[^0-9]/g,'');}
+function fmt(n){return Math.round(n||0).toLocaleString('en-IN');}
+function numv(id){var el=document.getElementById(id);return el?parseFloat(el.value)||0:0;}
+function inWords(n){
+  if(!n||n===0) return '';
+  var a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  var b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  function hw(num){
+    if(num===0) return '';
+    if(num<20) return a[num]+' ';
+    if(num<100) return b[Math.floor(num/10)]+' '+(num%10?a[num%10]+' ':'');
+    return a[Math.floor(num/100)]+' Hundred '+(num%100?hw(num%100):'');
+  }
+  var str='';
+  if(n>=10000000){str+=hw(Math.floor(n/10000000))+'Crore ';n%=10000000;}
+  if(n>=100000){str+=hw(Math.floor(n/100000))+'Lakh ';n%=100000;}
+  if(n>=1000){str+=hw(Math.floor(n/1000))+'Thousand ';n%=1000;}
+  str+=hw(n);
+  return str.trim()+' Only';
+}
+
+// ── BLOCK HELPERS ─────────────────────────────────────
+function unlock(id){
+  var b=document.getElementById(id);if(!b)return;
+  b.classList.remove('locked');b.classList.add('active');
+  setTimeout(function(){b.scrollIntoView({behavior:'smooth',block:'start'});},260);
+}
+function markDone(id,txt){
+  var b=document.getElementById(id);if(!b)return;
+  b.classList.remove('active');b.classList.add('done');
+  var s=document.getElementById(id+'s');
+  if(s&&txt){s.textContent=txt;s.style.display='block';}
+}
+function stepUp(n){
+  for(var i=1;i<=6;i++){
+    var el=document.getElementById('s'+i);if(!el)continue;
+    el.classList.remove('active','done','locked');
+    if(i<n) el.classList.add('done');
+    else if(i===n) el.classList.add('active');
+    else el.classList.add('locked');
+  }
+}
+function chpSel(el,grp){
+  el.closest('.chips').querySelectorAll('.chip').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+}
+function togPanName(el){
+  var isNo=el.classList.contains('sel');
+  document.getElementById('pan-altname').classList.toggle('hide',!isNo);
+}
+
+// ── DPDP ──────────────────────────────────────────────
+function showDPDP(){document.getElementById('dpdp-modal').classList.add('show');}
+function closeDPDP(){document.getElementById('dpdp-modal').classList.remove('show');}
+
+// ── IDENTIFY TYPE ─────────────────────────────────────
+function selId(type,el){
+  document.querySelectorAll('#b1 .chip').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');S.idType=type;
+  document.getElementById('pan-grp').classList.toggle('hide',type!=='pan');
+  document.getElementById('dob-grp').classList.toggle('hide',type!=='dob');
+}
+
+// ── PAN FORMAT ────────────────────────────────────────
+function panFmt(el,icId){
+  el.value=el.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  var ok=/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(el.value);
+  var ic=document.getElementById(icId);
+  if(el.value.length===10){
+    el.className=ok?'ok':'err';
+    if(ic){ic.textContent=ok?'✓':'✗';ic.style.color=ok?'var(--green)':'var(--error)';}
+  } else {el.className='';if(ic) ic.textContent='';}
+}
+
+// ── MOBILE ────────────────────────────────────────────
+function mobChk(){
+  var v=document.getElementById('mob').value;
+  var ic=document.getElementById('mob-ic');
+  if(v.length===10){ic.textContent='✓';ic.style.color='var(--green)';}
+  else ic.textContent='';
+}
+function sendOTP(){
+  var mob=document.getElementById('mob').value;
+  if(mob.length!==10){alert('Enter a valid 10-digit mobile number');return;}
+  if(!S.idType){alert('Please select PAN or Date of Birth to identify yourself');return;}
+  if(S.idType==='pan'){
+    var p=document.getElementById('pan-in').value;
+    if(!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(p)){alert('Enter valid PAN number');return;}
+    S.pan=p;S.path='A';
+  }
+  if(S.idType==='dob'){
+    var d=document.getElementById('dob-in').value;
+    if(!d){alert('Enter your date of birth');return;}
+    S.dob=d;S.path='B';
+    document.getElementById('path-badge').classList.add('show');
+  }
+  S.mob=mob;
+  document.getElementById('otp-disp').textContent=mob.replace(/(\d{5})(\d{5})/,'XXXXX$2');
+  // Lock mobile field
+  var mi=document.getElementById('mob');
+  mi.classList.add('locked-field');mi.readOnly=true;
+  document.getElementById('mob-sc').classList.add('hide');
+  document.getElementById('otp-sc').classList.remove('hide');
+  startTmr();document.getElementById('o1').focus();
+}
+function startTmr(){
+  var s=30;var el=document.getElementById('otmr');
+  if(tmr) clearInterval(tmr);
+  tmr=setInterval(function(){s--;if(s<=0){clearInterval(tmr);el.innerHTML='<span onclick="sendOTP()">Resend</span>';}else el.textContent=s+'s';},1000);
+}
+function om(el,nxt){
+  el.value=el.value.replace(/\D/g,'');
+  if(el.value.length===1&&nxt) document.getElementById(nxt).focus();
+  var all=['o1','o2','o3','o4','o5','o6'].map(function(i){return document.getElementById(i).value;}).join('');
+  if(all.length===6) verOTP();
+}
+function ob(e,prev){if(e.key==='Backspace'&&e.target.value===''&&prev) document.getElementById(prev).focus();}
+function od(){verOTP();}
+function verOTP(){
+  var otp=['o1','o2','o3','o4','o5','o6'].map(function(i){return document.getElementById(i).value;}).join('');
+  if(otp.length<6) return;
+  if(tmr) clearInterval(tmr);
+  var ld=document.getElementById('otp-ldr');ld.classList.add('show');
+  document.querySelector('#b1 .btn-p').disabled=true;
+  setTimeout(function(){
+    ld.classList.remove('show');
+    document.querySelector('#b1 .btn-p').disabled=false;
+    markDone('b1','+91 '+S.mob.replace(/(\d{6})(\d{4})/,'******$2')+' · Verified');
+    // Show PAN in profile if Path A
+    if(S.path==='A') document.getElementById('pan-profile-grp').classList.remove('hide');
+    unlock('b2');stepUp(2);
+  },1500);
+}
+function chgMob(){
+  var mi=document.getElementById('mob');
+  mi.classList.remove('locked-field');mi.readOnly=false;mi.value='';
+  document.getElementById('mob-ic').textContent='';
+  document.getElementById('mob-sc').classList.remove('hide');
+  document.getElementById('otp-sc').classList.add('hide');
+  ['o1','o2','o3','o4','o5','o6'].forEach(function(id){document.getElementById(id).value='';});
+  S.idType='';
+  document.getElementById('pan-grp').classList.add('hide');
+  document.getElementById('dob-grp').classList.add('hide');
+  document.querySelectorAll('#b1 .chip').forEach(function(c){c.classList.remove('sel');});
+}
+
+// ── AADHAAR eKYC ──────────────────────────────────────
+function togAA(){
+  var el=document.getElementById('aa-num');
+  el.type=el.type==='tel'?'text':'tel';
+}
+function getAAOTP(){
+  var aa=document.getElementById('aa-num').value;
+  if(aa.length<8){alert('Enter your 12-digit Aadhaar number');return;}
+  document.getElementById('aa-entry').classList.add('hide');
+  document.getElementById('aa-otp').classList.remove('hide');
+  startAATmr();document.getElementById('ao1').focus();
+}
+function startAATmr(){
+  var s=67;var el=document.getElementById('aatmr');
+  if(aaTmr) clearInterval(aaTmr);
+  aaTmr=setInterval(function(){s--;if(s<=0){clearInterval(aaTmr);el.innerHTML='<span onclick="getAAOTP()">Resend</span>';}else el.textContent=s+'s';},1000);
+}
+function verAAOTP(){
+  var otp=['ao1','ao2','ao3','ao4','ao5','ao6'].map(function(i){return document.getElementById(i).value;}).join('');
+  if(otp.length<6) return;
+  if(aaTmr) clearInterval(aaTmr);
+  var ld=document.getElementById('aa-ldr');ld.classList.add('show');
+  document.querySelector('#b2 .btn-p').disabled=true;
+  setTimeout(function(){
+    ld.classList.remove('show');
+    document.querySelector('#b2 .btn-p').disabled=false;
+    // Pre-fill dummy data (no real data)
+    document.getElementById('pd-fn').value='John';
+    document.getElementById('pd-ln').value='Doe';
+    document.getElementById('pd-dob').value='1990-01-15';
+    document.getElementById('pd-perm').value='Auto-filled: House No. XX, Street Name, City, State, PIN 000000';
+    if(S.path==='A') document.getElementById('pd-pan').value=S.pan||'XXXXX0000X';
+    S.custFN='John';S.custLN='Doe';
+    // Lock eKYC fields after verification
+    ['pd-fn','pd-ln','pd-dob','pd-perm','pd-pan'].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el){el.classList.add('locked-field');el.readOnly=true;}
+    });
+    markDone('b2','Aadhaar eKYC verified 🔒');
+    // Show path B employment or path A
+    if(S.path==='B'){
+      document.getElementById('emp-b').classList.remove('hide');
+      document.getElementById('emp-a').classList.add('hide');
+    }
+    unlock('b3');stepUp(3);
+  },2200);
+}
+function backAA(){
+  document.getElementById('aa-entry').classList.remove('hide');
+  document.getElementById('aa-otp').classList.add('hide');
+}
+
+// ── PROFILE ────────────────────────────────────────────
+function selComm(type,el){
+  document.querySelectorAll('#b3 .chip').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  document.getElementById('comm-fields').classList.toggle('hide',type!=='manual');
+}
+function fetchPin(){
+  var v=document.getElementById('ca-pin').value;
+  if(v.length===6){
+    setTimeout(function(){
+      document.getElementById('ca-city').value='Sample City';
+      document.getElementById('ca-state').value='Sample State';
+    },500);
+  }
+}
+function confProfile(){
+  var fn=document.getElementById('pd-fn').value.trim();
+  var ln=document.getElementById('pd-ln').value.trim();
+  var email=document.getElementById('pd-email').value.trim();
+  if(!fn||!ln){alert('Name cannot be empty');return;}
+  if(!email||!email.includes('@')){alert('Enter a valid email address');return;}
+  var ms=document.getElementById('pd-ms').value;
+  if(!ms){alert('Select your marital status');return;}
+  S.custFN=fn;S.custLN=ln;
+  // Lock profile after confirmation
+  ['pd-fn','pd-ln','pd-email'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el){el.classList.add('locked-field');el.readOnly=true;}
+  });
+  markDone('b3',fn+' '+ln+' · Profile confirmed 🔒');
+  unlock('b4');stepUp(4);
+  document.getElementById('b4-edit').style.display='block';
+}
+function editB4(){
+  var b=document.getElementById('b4');
+  b.classList.remove('done');b.classList.add('active');
+  b.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── ON-ROAD PRICE ──────────────────────────────────────
+var MIN_PRICE=50000,MAX_PRICE=500000;
+function onPriceChange(){
+  var p=numv('tw-price');
+  var err=document.getElementById('price-err');
+  if(p>0&&(p<MIN_PRICE||p>MAX_PRICE)){
+    err.textContent='On-road price must be between ₹'+fmt(MIN_PRICE)+' and ₹'+fmt(MAX_PRICE);
+    err.classList.remove('hide');
+  } else {
+    err.classList.add('hide');
+  }
+  S.twPrice=p;
+  // Update slider max
+  var maxLoan=Math.min(p,MAX_PRICE);
+  document.getElementById('loan-slider').max=maxLoan||MAX_PRICE;
+  document.getElementById('sl-max').textContent='₹'+fmt(maxLoan||MAX_PRICE);
+  // Cap current loan amount
+  var curLoan=numv('loan-amt');
+  if(curLoan>maxLoan&&maxLoan>0){
+    document.getElementById('loan-amt').value=maxLoan;
+    document.getElementById('loan-slider').value=maxLoan;
+    S.loanAmt=maxLoan;
+  }
+  calcEMI();
+  validateDisc();
+}
+function toggleDisc(){
+  var on=document.getElementById('disc-tog').classList.contains('on');
+  document.getElementById('disc-grp').classList.toggle('hide',!on);
+  if(!on){document.getElementById('tw-disc').value='';S.twDisc=0;calcEMI();}
+}
+function onDiscChange(){
+  validateDisc();calcEMI();
+}
+function validateDisc(){
+  var p=numv('tw-price');
+  var d=numv('tw-disc');
+  var err=document.getElementById('disc-err');
+  if(d<=0){err.classList.add('hide');return;}
+  if(d>=p){
+    err.textContent='Discount cannot be equal to or more than the on-road price';
+    err.classList.remove('hide');return;
+  }
+  if((p-d)<MIN_PRICE){
+    err.textContent='After discount, vehicle price cannot be below ₹'+fmt(MIN_PRICE);
+    err.classList.remove('hide');return;
+  }
+  err.classList.add('hide');
+  S.twDisc=d;
+  // Adjust max loan
+  var netPrice=p-d;
+  document.getElementById('loan-slider').max=netPrice;
+  document.getElementById('sl-max').textContent='₹'+fmt(netPrice);
+  var curLoan=numv('loan-amt');
+  if(curLoan>netPrice){
+    document.getElementById('loan-amt').value=netPrice;
+    document.getElementById('loan-slider').value=netPrice;
+    S.loanAmt=netPrice;
+  }
+}
+
+// ── LOAN AMOUNT + SLIDER ───────────────────────────────
+function onLoanAmtChange(){
+  var amt=numv('loan-amt');
+  var maxLoan=parseInt(document.getElementById('loan-slider').max)||MAX_PRICE;
+  var err=document.getElementById('loan-err');
+  if(amt>maxLoan){
+    document.getElementById('loan-amt').value=maxLoan;
+    amt=maxLoan;
+    err.textContent='Loan amount cannot exceed vehicle on-road price (₹'+fmt(maxLoan)+')';
+    err.classList.remove('hide');
+    setTimeout(function(){err.classList.add('hide');},3000);
+  } else {
+    err.classList.add('hide');
+  }
+  document.getElementById('loan-slider').value=amt;
+  S.loanAmt=amt;
+  // Path B: show PAN upgrade if ≥1L
+  checkPathUpgrade(amt);
+  calcEMI();
+}
+function onSliderChange(v){
+  v=parseInt(v);
+  document.getElementById('loan-amt').value=v;
+  S.loanAmt=v;
+  checkPathUpgrade(v);
+  calcEMI();
+}
+function checkPathUpgrade(amt){
+  if(S.path==='B'&&amt>=100000&&!S.pan){
+    document.getElementById('pan-upgrade').classList.add('show');
+  } else {
+    document.getElementById('pan-upgrade').classList.remove('show');
+  }
+}
+function verUpgPAN(){
+  var p=document.getElementById('upg-pan').value;
+  if(!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(p)){alert('Enter valid PAN');return;}
+  var ld=document.getElementById('upg-ldr');ld.classList.add('show');
+  document.querySelector('.pan-upgrade .btn-s').disabled=true;
+  setTimeout(function(){
+    ld.classList.remove('show');
+    document.querySelector('.pan-upgrade .btn-s').disabled=false;
+    S.pan=p;S.path='A';
+    document.getElementById('pan-upgrade').classList.remove('show');
+    document.getElementById('path-badge').classList.remove('show');
+    document.getElementById('form97-wrap').classList.add('hide');
+    alert('✓ PAN verified via NSDL. Journey upgraded to standard path.');
+  },1800);
+}
+function selTen(t,el){
+  document.querySelectorAll('.tc_').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');ten=t;S.tenure=t;calcEMI();
+}
+function calcEMI(){
+  var amt=S.loanAmt||numv('loan-amt');
+  var r=S.rate/100/12,n=ten;
+  var e=amt>0&&r>0?Math.round(amt*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)):0;
+  S.emi=e;
+  document.getElementById('emi-disp').textContent=e?'₹'+fmt(e):'₹—';
+  document.getElementById('emi-sub').textContent=ten+' months · ~'+S.rate+'% p.a. (indicative)';
+}
+
+// ── GENERATE OFFER ─────────────────────────────────────
+function genOffer(){
+  var mfr=document.getElementById('tw-mfr').value;
+  var model=document.getElementById('tw-model').value.trim();
+  var price=numv('tw-price');
+  var disc=numv('tw-disc')||0;
+  var amt=numv('loan-amt');
+  var income=S.path==='B'?numv('b-inc'):numv('emp-inc');
+
+  // Validations
+  if(!mfr){alert('Select manufacturer');return;}
+  if(!model){alert('Enter vehicle model');return;}
+  if(!price||price<MIN_PRICE||price>MAX_PRICE){alert('On-road price must be between ₹'+fmt(MIN_PRICE)+' and ₹'+fmt(MAX_PRICE));return;}
+  if(disc>0&&(price-disc)<MIN_PRICE){alert('After discount, price cannot be below ₹'+fmt(MIN_PRICE));return;}
+  if(!amt||amt<1000){alert('Enter loan amount required');return;}
+  var netPrice=price-disc;
+  if(amt>netPrice){alert('Loan amount cannot exceed vehicle price (₹'+fmt(netPrice)+')');return;}
+  if(S.path==='B'&&amt>=100000&&!S.pan){alert('PAN verification required for loans ₹1,00,000 and above');return;}
+  if(!income){alert('Enter your income details');return;}
+  // Form 97 check
+  if(S.path==='B'){
+    if(!document.getElementById('c-f97').checked){alert('Please confirm the Form 97 RBI declaration to proceed');return;}
+  }
+
+  S.twMfr=mfr;S.twModel=model;S.twPrice=price;S.twDisc=disc;S.loanAmt=amt;S.income=income;
+
+  // Show Form 97 data for Path B
+  if(S.path==='B'){
+    document.getElementById('form97-wrap').classList.remove('hide');
+    document.getElementById('f97-name').textContent=S.custFN+' '+S.custLN;
+    document.getElementById('f97-dob').textContent=document.getElementById('pd-dob').value.split('-').reverse().join('/');
+    document.getElementById('f97-mob').textContent='+91 '+S.mob.replace(/(\d{5})(\d{5})/,'XXXXX$2');
+    document.getElementById('f97-loan').textContent='₹'+fmt(amt);
+    document.getElementById('f97-inc').textContent='₹'+fmt(income)+' p.a.';
+  }
+
+  var ld=document.getElementById('offer-ldr');ld.classList.add('show');
+  document.querySelector('#b4 .btn-p').disabled=true;
+  var fi=setInterval(function(){fIdx=(fIdx+1)%FACTS.length;document.getElementById('offer-fact').textContent=FACTS[fIdx];},1500);
+
+  setTimeout(function(){
+    clearInterval(fi);
+    ld.classList.remove('show');
+    document.querySelector('#b4 .btn-p').disabled=false;
+
+    // Offer = what customer asked, capped at 90% of net price
+    var maxOffer=Math.floor(netPrice*0.9);
+    S.offerAmt=Math.min(amt,maxOffer);
+    S.offerRef='TWL'+Date.now().toString().slice(-8);
+
+    // Populate offer card
+    document.getElementById('off-nm').textContent=(S.custFN||'Customer')+'!';
+    document.getElementById('off-amt').textContent=fmt(S.offerAmt);
+    document.getElementById('off-words').textContent=inWords(S.offerAmt);
+    document.getElementById('off-emi').textContent='₹'+fmt(Math.round(S.offerAmt*S.rate/100/12*Math.pow(1+S.rate/100/12,ten)/(Math.pow(1+S.rate/100/12,ten)-1)));
+    document.getElementById('off-ten').textContent=ten+' mo';
+    document.getElementById('off-ref').textContent=S.offerRef;
+    document.getElementById('off-tw').textContent=mfr+' '+model;
+    document.getElementById('off-price').textContent='₹'+fmt(price)+(disc?' (–₹'+fmt(disc)+' discount)':'');
+    var d=new Date();d.setDate(d.getDate()+30);
+    document.getElementById('off-val').textContent='Valid till '+d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+
+    markDone('b4',model+' · ₹'+fmt(S.offerAmt)+' · '+ten+' mo');
+    unlock('b5');stepUp(5);
+  },3000);
+}
+
+// ── FULL KYC ───────────────────────────────────────────
+function doFaceAuth(){
+  var ld=document.getElementById('fkyc-ldr');ld.classList.add('show');
+  document.getElementById('fkyc-lt').textContent='Initiating Face Authentication…';
+  setTimeout(function(){
+    ld.classList.remove('show');
+    S.kycDone=true;
+    document.getElementById('apply-btn').disabled=false;
+    document.getElementById('apply-btn').textContent='Apply Now →';
+    // Mark KYC section visually
+    document.getElementById('fkyc-lt').textContent='';
+    // Show success pill
+    var p=document.createElement('div');p.className='pill-g mt8';p.textContent='✓ Face Authentication complete — Full KYC done';
+    document.getElementById('fkyc-ldr').parentNode.insertBefore(p,document.getElementById('fkyc-ldr').nextSibling);
+  },2500);
+}
+function doVKYC(){
+  var ld=document.getElementById('fkyc-ldr');ld.classList.add('show');
+  document.getElementById('fkyc-lt').textContent='Scheduling Video KYC…';
+  setTimeout(function(){
+    ld.classList.remove('show');
+    S.kycDone=true;
+    document.getElementById('apply-btn').disabled=false;
+    document.getElementById('apply-btn').textContent='Apply Now →';
+    alert('Video KYC scheduled. An HDFC Bank officer will call your registered number within 30 minutes. Please keep your original documents ready.');
+    var p=document.createElement('div');p.className='pill-g mt8';p.textContent='✓ Video KYC scheduled — Full KYC in progress';
+    document.getElementById('fkyc-ldr').parentNode.insertBefore(p,document.getElementById('fkyc-ldr').nextSibling);
+  },1500);
+}
+
+// ── INSURANCE ──────────────────────────────────────────
+function selVI(type,el){
+  ['vi-hdfc','vi-own'].forEach(function(id){document.getElementById(id).classList.remove('sel');});
+  el.classList.add('sel');S.vIns=type;
+  document.getElementById('vi-up').classList.toggle('hide',type!=='own');
+}
+function uploadVI(){
+  document.getElementById('vi-up-ok').classList.remove('hide');
+}
+function togLI(el){
+  el.classList.toggle('sel');
+  S.lIns=el.classList.contains('sel');
+}
+
+// ── APPLY NOW ──────────────────────────────────────────
+function applyNow(){
+  if(!S.kycDone){alert('Please complete KYC first');return;}
+  if(!S.vIns){alert('Please select vehicle insurance to proceed');return;}
+  var insText=S.vIns==='hdfc'?'HDFC ERGO':'Own insurance';
+  markDone('b5','Offer accepted · KYC complete · '+insText+(S.lIns?' + Loan Protection':''));
+  // Populate disbursement
+  document.getElementById('dis-title').textContent='Congratulations, '+(S.custFN||'Customer')+'!';
+  document.getElementById('dis-amt').textContent='₹'+fmt(S.offerAmt);
+  document.getElementById('dis-ref').textContent=S.offerRef;
+  document.getElementById('dis-tw').textContent=S.twMfr+' '+S.twModel;
+  document.getElementById('dis-emi').textContent='₹'+fmt(S.emi||0);
+  document.getElementById('dis-ten').textContent=ten+' months';
+  unlock('b6');stepUp(6);
+}
+
+// ── PDD ────────────────────────────────────────────────
+function uploadPDD(id){
+  document.getElementById(id).classList.add('up');
+  var s=document.getElementById(id+'-s');
+  s.textContent='✓ Uploaded';s.className='pdd-s ok';
+}
+
+// ── NPS ────────────────────────────────────────────────
+function sNPS(el){
+  document.querySelectorAll('#nps-r button').forEach(function(b){b.style.background='#fff';b.style.color='var(--text)';b.style.borderColor='var(--gray-mid)';});
+  el.style.background='var(--navy)';el.style.color='#fff';el.style.borderColor='var(--navy)';
+}
+
+// ── INIT ────────────────────────────────────────────────
+document.getElementById('loan-amt').value='50000';
+calcEMI();
+</script>
+</body>
+</html>
